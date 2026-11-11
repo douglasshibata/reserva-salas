@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sugestao-service
+  labels:
+    app: sugestao-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sugestao-service
+  template:
+    metadata:
+      labels:
+        app: sugestao-service
+    spec:
+      containers:
+      - name: sugestao-service
+        image: sugestao-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: QUARKUS_REST_CLIENT_BOOKING_SERVICE_API_URL
+          value: "http://booking-service:8081"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sugestao-service
+spec:
+  type: ClusterIP
+  selector:
+    app: sugestao-service
+  ports:
+  - port: 8082
+    targetPort: 8082
